@@ -8,6 +8,8 @@ const PATHS = {
 }
 
 module.exports = {
+  mode: 'development',
+
   entry: {
     app: `${PATHS.src}/index.tsx`
   },
@@ -19,7 +21,7 @@ module.exports = {
   },
 
   resolve: {
-    extensions: ['.tsx', '.ts']
+    extensions: ['.tsx', '.ts', '.js']
   },
 
   plugins: [
