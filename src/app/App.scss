@@ -1,4 +1,22 @@
+body {
+  background: #aaa;
+}
+
 .test {
   color: green;
   font-size: 10rem;
+}
+
+.mx1 {
+  margin: 1rem;
+}
+
+.px1 {
+  padding: 0.5rem;
+}
+
+.desk {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
 }
