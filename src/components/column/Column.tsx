@@ -3,14 +3,6 @@ import { PlusIcon } from "../icons/PlusIcon";
 import { Card } from "../card/Card";
 import "./Column.scss";
 
-const card = {
-  title: "test",
-  description: "test",
-  author: "test",
-  column: "TODO",
-  comments: [],
-};
-
 interface ColumnProps {
   title: string;
 }
@@ -53,6 +45,10 @@ export const Column: React.FC<ColumnProps> = (props) => {
     setCards([...cards, newCard]);
   }
 
+  function closeCreatingViewHandler() {
+    setIsCreating(false);
+  }
+
   return (
     <>
       <div className="cards_column bg-light mx1 px1">
@@ -69,9 +65,7 @@ export const Column: React.FC<ColumnProps> = (props) => {
         ))}
         {isCreating ? (
           <CreatingView
-            onClose={() => {
-              setIsCreating(false);
-            }}
+            onClose={closeCreatingViewHandler}
             onAddCard={addCardHandler}
           />
         ) : (
