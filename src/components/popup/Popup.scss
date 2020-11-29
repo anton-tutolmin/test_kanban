@@ -11,16 +11,23 @@
 .popup {
   position: relative;
   width: 600px;
-  height: 500px;
   padding: 1rem;
   margin: 0 auto;
 }
 
-.test {
+.popup__wrapper {
   z-index: 11;
   position: absolute;
   top: 60px;
   width: 100%;
+}
+
+.popup__title {
+  border: none;
+  background: none;
+  &:focus {
+    background: white;
+  }
 }
 
 .description__text {

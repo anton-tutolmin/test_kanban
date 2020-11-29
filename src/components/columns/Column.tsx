@@ -1,17 +1,21 @@
 import React, { useState, useRef, useEffect } from "react";
 import { PlusIcon } from "../icons/PlusIcon";
-import { Card } from "../card/Card";
+import Card from "../card/Card";
+import { ICard } from "../../types/types";
 import "./Column.scss";
 
 interface ColumnProps {
   title: string;
+  cards: ICard[];
+  onAddCard(card: any): void;
+  onUpdateTitle(newTitle: string): void;
 }
 
 export const Column: React.FC<ColumnProps> = (props) => {
   const [title, setTitle] = useState<string>(props.title);
   const [isCreating, setIsCreating] = useState<boolean>(false);
 
-  const [cards, setCards] = useState<any[]>([]);
+  const titleRef = useRef<HTMLInputElement>(null);
 
   function titleChangeHandler(e: React.ChangeEvent<HTMLInputElement>) {
     setTitle(e.target.value);
@@ -20,29 +24,23 @@ export const Column: React.FC<ColumnProps> = (props) => {
   function keyPressHandler(e: React.KeyboardEvent) {
     if (e.key === "Enter") {
       if (title.length === 0) {
-        // TODO
         setTitle(props.title);
       } else {
-        // TODO
+        props.onUpdateTitle(title);
+        titleRef.current?.blur();
       }
     }
   }
 
   function blurHandler(e: React.FocusEvent<HTMLInputElement>) {
-    setTitle(props.title);
+    if (title.length === 0) {
+      setTitle(props.title);
+    }
   }
 
   function addCardHandler(newCardTitle: string) {
-    const newCard = {
-      title: newCardTitle,
-      description: "",
-      author: "",
-      column: "",
-      comments: [],
-    };
-
     setIsCreating(false);
-    setCards([...cards, newCard]);
+    props.onAddCard(newCardTitle);
   }
 
   function closeCreatingViewHandler() {
@@ -59,9 +57,10 @@ export const Column: React.FC<ColumnProps> = (props) => {
           onChange={titleChangeHandler}
           onKeyPress={keyPressHandler}
           onBlur={blurHandler}
+          ref={titleRef}
         />
-        {cards.map((c) => (
-          <Card card={c} />
+        {props.cards.map((c) => (
+          <Card card={c} key={Math.random()} />
         ))}
         {isCreating ? (
           <CreatingView
@@ -90,10 +89,10 @@ interface CreatingViewProps {
 
 const CreatingView: React.FC<CreatingViewProps> = (props) => {
   const [title, setTitle] = useState<string>("");
-  const textareaEl = useRef<HTMLTextAreaElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
-    textareaEl.current?.focus();
+    textareaRef.current?.focus();
   }, []);
 
   function titleChangeHandler(e: React.ChangeEvent<HTMLTextAreaElement>): void {
@@ -115,7 +114,7 @@ const CreatingView: React.FC<CreatingViewProps> = (props) => {
         placeholder="Enter card's title"
         onChange={titleChangeHandler}
         onKeyDown={keyPressHandler}
-        ref={textareaEl}
+        ref={textareaRef}
       />
       <div className="cards_column__control_btns">
         <button

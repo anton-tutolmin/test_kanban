@@ -1,13 +1,20 @@
 import React, { useRef } from "react";
-import { ICard } from "../../ifaces/ICard";
+import { connect } from "react-redux";
 import { PencilIcon } from "../icons/PencilIcon";
+import { ICard } from "../../types/types";
 import "./Card.scss";
 
-interface CardProps {
+interface DispatchProps {
+  setPopup: (card: ICard) => void;
+}
+
+interface OwnProps {
   card: ICard;
 }
 
-export const Card: React.FC<CardProps> = (props) => {
+type Props = DispatchProps & OwnProps;
+
+const Card: React.FC<Props> = (props) => {
   const btnEl = useRef<HTMLButtonElement>(null);
 
   function showBtn() {
@@ -16,6 +23,10 @@ export const Card: React.FC<CardProps> = (props) => {
 
   function hideBtn() {
     btnEl.current?.classList.remove("active");
+  }
+
+  function clickHandler(e: React.MouseEvent<HTMLButtonElement>) {
+    props.setPopup(props.card);
   }
 
   return (
@@ -29,9 +40,16 @@ export const Card: React.FC<CardProps> = (props) => {
         type="button"
         className="task-card__chng-title-btn text-secondary rounded"
         ref={btnEl}
+        onClick={clickHandler}
       >
         <PencilIcon />
       </button>
     </div>
   );
 };
+
+const mapDispatch = {
+  setPopup: (card: ICard) => ({ type: "LOAD_POPUP", payload: card }),
+};
+
+export default connect<null, DispatchProps>(null, mapDispatch)(Card);

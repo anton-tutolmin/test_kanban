@@ -1,9 +1,13 @@
 import React, { useState } from "react";
 import { Comment } from "../comment/Comment";
-import { IComment } from "../../ifaces/IComment";
+import { IComment } from "../../types/types";
 
 interface CommentsProps {
   comments: IComment[];
+  username: string;
+  onAdd(comment: string): void;
+  onUpdate(commentId: string, text: string): void;
+  onDelete(commentId: string): void;
 }
 
 export const PopupComments: React.FC<CommentsProps> = (props) => {
@@ -11,6 +15,13 @@ export const PopupComments: React.FC<CommentsProps> = (props) => {
 
   function changeHandler(e: React.ChangeEvent<HTMLInputElement>): void {
     setComment(e.target.value);
+  }
+
+  function addCommentHandler(e: React.MouseEvent<HTMLButtonElement>) {
+    if (comment.length > 0) {
+      props.onAdd(comment);
+      setComment("");
+    }
   }
 
   return (
@@ -26,13 +37,23 @@ export const PopupComments: React.FC<CommentsProps> = (props) => {
           value={comment}
           onChange={changeHandler}
         />
-        <button type="button" className="btn btn-success mt-md-1">
+        <button
+          type="button"
+          className="btn btn-success mt-md-1"
+          onClick={addCommentHandler}
+        >
           Add
         </button>
       </div>
       <div className="comments__list">
         {props.comments.map((c) => (
-          <Comment comment={c} />
+          <Comment
+            key={c.id}
+            comment={c}
+            username={props.username}
+            onUpdate={props.onUpdate}
+            onDelete={props.onDelete}
+          />
         ))}
       </div>
     </div>

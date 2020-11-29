@@ -2,26 +2,25 @@ import React, { useState } from "react";
 
 interface DescriptionProps {
   description: string;
+  onUpdate(description: string): void;
 }
 
 export const PopupDescription: React.FC<DescriptionProps> = (props) => {
+  function updateDescriptionHandler(description: string) {
+    props.onUpdate(description);
+  }
+
   return (
     <div className="description mt-md-2">
       <div className="description__title h4">
         <strong>Description:</strong>
       </div>
       {props.description.length === 0 ? (
-        <NoDescriptionView
-          onSaveDescription={() => {
-            return;
-          }}
-        />
+        <NoDescriptionView onSave={updateDescriptionHandler} />
       ) : (
         <HasDescriptionView
           description={props.description}
-          onSaveDescription={() => {
-            return;
-          }}
+          onSave={updateDescriptionHandler}
         />
       )}
     </div>
@@ -29,7 +28,7 @@ export const PopupDescription: React.FC<DescriptionProps> = (props) => {
 };
 
 interface NoDescriptionViewProps {
-  onSaveDescription(description: string): void;
+  onSave(description: string): void;
 }
 
 const NoDescriptionView: React.FC<NoDescriptionViewProps> = (props) => {
@@ -40,7 +39,7 @@ const NoDescriptionView: React.FC<NoDescriptionViewProps> = (props) => {
   }
 
   function saveHandler(e: React.MouseEvent<HTMLButtonElement>): void {
-    // TODO
+    props.onSave(description);
   }
 
   return (
@@ -60,7 +59,7 @@ const NoDescriptionView: React.FC<NoDescriptionViewProps> = (props) => {
 
 interface HasDescriptionViewProps {
   description: string;
-  onSaveDescription(description: string): void;
+  onSave(description: string): void;
 }
 
 const HasDescriptionView: React.FC<HasDescriptionViewProps> = (props) => {
@@ -72,8 +71,8 @@ const HasDescriptionView: React.FC<HasDescriptionViewProps> = (props) => {
   }
 
   function saveHandler(e: React.MouseEvent<HTMLButtonElement>): void {
-    // TODO
     setIsUpdating(false);
+    props.onSave(description);
   }
 
   function cancelHandler(e: React.MouseEvent<HTMLButtonElement>): void {
