@@ -2,6 +2,11 @@ import React from "react";
 import { connect } from "react-redux";
 import { Column } from "./Column";
 import { IColumnState, ICard } from "../../types/types";
+import {
+  addDoneCard,
+  updateDoneTitle,
+  loadDone,
+} from "../../store/actions/actions";
 
 interface StateProps {
   done: IColumnState;
@@ -49,11 +54,9 @@ const mapState = (state: any) => ({
 });
 
 const mapDispatch = {
-  addDoneCard: (card: ICard) => ({ type: "ADD_DONE_CARD", payload: card }),
-  updateColumnTitle: (newTitle: string) => ({
-    type: "UPDATE_DONE_TITLE",
-    payload: newTitle,
-  }),
+  addDoneCard: (card: ICard) => addDoneCard(card),
+  updateColumnTitle: (newTitle: string) => updateDoneTitle(newTitle),
+  loadDone: (done: IColumnState) => loadDone(done),
 };
 
 export default connect<StateProps, DispatchProps>(

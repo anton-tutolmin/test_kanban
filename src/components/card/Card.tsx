@@ -2,6 +2,7 @@ import React, { useRef } from "react";
 import { connect } from "react-redux";
 import { PencilIcon } from "../icons/PencilIcon";
 import { ICard } from "../../types/types";
+import { loadPopup } from "../../store/actions/actions";
 import "./Card.scss";
 
 interface DispatchProps {
@@ -25,7 +26,7 @@ const Card: React.FC<Props> = (props) => {
     btnEl.current?.classList.remove("active");
   }
 
-  function clickHandler(e: React.MouseEvent<HTMLButtonElement>) {
+  function clickHandler() {
     props.setPopup(props.card);
   }
 
@@ -49,7 +50,7 @@ const Card: React.FC<Props> = (props) => {
 };
 
 const mapDispatch = {
-  setPopup: (card: ICard) => ({ type: "LOAD_POPUP", payload: card }),
+  setPopup: (card: ICard) => loadPopup(card),
 };
 
 export default connect<null, DispatchProps>(null, mapDispatch)(Card);

@@ -32,7 +32,7 @@ export const Column: React.FC<ColumnProps> = (props) => {
     }
   }
 
-  function blurHandler(e: React.FocusEvent<HTMLInputElement>) {
+  function blurHandler() {
     if (title.length === 0) {
       setTitle(props.title);
     }

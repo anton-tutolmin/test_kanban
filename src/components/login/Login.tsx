@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { connect } from "react-redux";
+import { loadUser } from "../../store/actions/actions";
 import "./Login.scss";
 
 interface DispatchProps {
@@ -44,7 +45,7 @@ const Login: React.FC<DispatchProps> = (props) => {
 };
 
 const mapDispatch = {
-  loadUser: (username: string) => ({ type: "LOAD_USER", payload: username }),
+  loadUser: (username: string) => loadUser(username),
 };
 
 export default connect(null, mapDispatch)(Login);

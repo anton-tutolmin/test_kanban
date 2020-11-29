@@ -3,6 +3,13 @@ import { connect } from "react-redux";
 import { ICard, IComment } from "../../types/types";
 import { PopupDescription } from "./PopupDescription";
 import { PopupComments } from "./PopupComments";
+import {
+  updatePopupTitle,
+  updatePopupDescription,
+  updatePopupComments,
+  updateCard,
+  clearPopup,
+} from "../../store/actions/actions";
 import "./Popup.scss";
 
 interface StateProps {
@@ -28,16 +35,21 @@ const Popup: React.FC<Props> = (props) => {
   const cardTitleRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    window.addEventListener("keydown", closePopup);
+    function closePopupOnEsc(e: KeyboardEvent) {
+      if (e.key === "Escape") {
+        props.clearPopup();
+      }
+    }
+
+    window.addEventListener("keydown", closePopupOnEsc);
+
     return () => {
-      window.removeEventListener("keydown", closePopup);
+      window.removeEventListener("keydown", closePopupOnEsc);
     };
   }, []);
 
-  function closePopup(e: KeyboardEvent) {
-    if (e.key === "Escape") {
-      props.clearPopup();
-    }
+  function closePopup() {
+    props.clearPopup();
   }
 
   function changeTitleHandler(e: React.ChangeEvent<HTMLInputElement>) {
@@ -97,6 +109,14 @@ const Popup: React.FC<Props> = (props) => {
     <>
       <div className="popup__wrapper">
         <div className="popup bg-light rounded">
+          <button
+            type="button"
+            className="close"
+            aria-label="Close"
+            onClick={closePopup}
+          >
+            <span aria-hidden="true">&times;</span>
+          </button>
           <div>
             <input
               type="text"
@@ -139,23 +159,12 @@ const mapState = (state: any) => ({
 });
 
 const mapDispatch = {
-  updateTitle: (newTitle: string) => ({
-    type: "SET_POPUP_TITLE",
-    payload: newTitle,
-  }),
-  updateDescription: (newDescription: string) => ({
-    type: "SET_POPUP_DESCRIPTION",
-    payload: newDescription,
-  }),
-  updateComments: (comments: IComment[]) => ({
-    type: "SET_POPUP_COMMENTS",
-    payload: comments,
-  }),
-  updateCard: (card: ICard) => ({
-    type: "UPDATE_CARD",
-    payload: card,
-  }),
-  clearPopup: () => ({ type: "CLEAR_POPUP" }),
+  updateTitle: (newTitle: string) => updatePopupTitle(newTitle),
+  updateDescription: (newDescription: string) =>
+    updatePopupDescription(newDescription),
+  updateComments: (comments: IComment[]) => updatePopupComments(comments),
+  updateCard: (card: ICard) => updateCard(card),
+  clearPopup: () => clearPopup(),
 };
 
 export default connect<StateProps, DispatchProps>(mapState, mapDispatch)(Popup);

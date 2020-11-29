@@ -2,6 +2,11 @@ import React from "react";
 import { connect } from "react-redux";
 import { Column } from "./Column";
 import { IColumnState, ICard } from "../../types/types";
+import {
+  addInProgressCard,
+  updateInProgressTitle,
+  loadInProgress,
+} from "../../store/actions/actions";
 
 interface StateProps {
   inProgress: IColumnState;
@@ -49,14 +54,9 @@ const mapState = (state: any) => ({
 });
 
 const mapDispatch = {
-  addInProgressCard: (card: ICard) => ({
-    type: "ADD_INPROGRESS_CARD",
-    payload: card,
-  }),
-  updateColumnTitle: (newTitle: string) => ({
-    type: "UPDATE_INPROGRESS_TITLE",
-    payload: newTitle,
-  }),
+  addInProgressCard: (card: ICard) => addInProgressCard(card),
+  updateColumnTitle: (newTitle: string) => updateInProgressTitle(newTitle),
+  loadInProgress: (inProgress: IColumnState) => loadInProgress(inProgress),
 };
 
 export default connect<StateProps, DispatchProps>(

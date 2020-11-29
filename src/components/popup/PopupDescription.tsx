@@ -70,12 +70,12 @@ const HasDescriptionView: React.FC<HasDescriptionViewProps> = (props) => {
     setDescription(e.target.value);
   }
 
-  function saveHandler(e: React.MouseEvent<HTMLButtonElement>): void {
+  function saveHandler(): void {
     setIsUpdating(false);
     props.onSave(description);
   }
 
-  function cancelHandler(e: React.MouseEvent<HTMLButtonElement>): void {
+  function cancelHandler(): void {
     setIsUpdating(false);
     setDescription(props.description);
   }

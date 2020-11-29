@@ -17,7 +17,7 @@ export const PopupComments: React.FC<CommentsProps> = (props) => {
     setComment(e.target.value);
   }
 
-  function addCommentHandler(e: React.MouseEvent<HTMLButtonElement>) {
+  function addCommentHandler() {
     if (comment.length > 0) {
       props.onAdd(comment);
       setComment("");

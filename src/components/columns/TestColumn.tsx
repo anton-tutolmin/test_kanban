@@ -2,6 +2,11 @@ import React from "react";
 import { connect } from "react-redux";
 import { Column } from "./Column";
 import { IColumnState, ICard } from "../../types/types";
+import {
+  addTestCard,
+  updateTestTitle,
+  loadTest,
+} from "../../store/actions/actions";
 
 interface StateProps {
   test: IColumnState;
@@ -49,11 +54,9 @@ const mapState = (state: any) => ({
 });
 
 const mapDispatch = {
-  addTestCard: (card: ICard) => ({ type: "ADD_TEST_CARD", payload: card }),
-  updateColumnTitle: (newTitle: string) => ({
-    type: "UPDATE_TEST_TITLE",
-    payload: newTitle,
-  }),
+  addTestCard: (card: ICard) => addTestCard(card),
+  updateColumnTitle: (newTitle: string) => updateTestTitle(newTitle),
+  loadTest: (test: IColumnState) => loadTest(test),
 };
 
 export default connect<StateProps, DispatchProps>(

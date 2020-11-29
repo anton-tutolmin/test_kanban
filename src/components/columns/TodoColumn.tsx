@@ -2,6 +2,11 @@ import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import { Column } from "./Column";
 import { IColumnState, ICard } from "../../types/types";
+import {
+  addTodoCard,
+  updateTodoTitle,
+  loadTodo,
+} from "../../store/actions/actions";
 
 interface StateProps {
   todo: IColumnState;
@@ -50,15 +55,9 @@ const mapState = (state: any) => ({
 });
 
 const mapDispatch = {
-  addTodoCard: (card: ICard) => ({ type: "ADD_TODO_CARD", payload: card }),
-  updateColumnTitle: (newTitle: string) => ({
-    type: "UPDATE_TITLE_TODO",
-    payload: newTitle,
-  }),
-  loadTodo: (todoData: IColumnState) => ({
-    type: "LOAD_TODO",
-    payload: todoData,
-  }),
+  addTodoCard: (card: ICard) => addTodoCard(card),
+  updateColumnTitle: (newTitle: string) => updateTodoTitle(newTitle),
+  loadTodo: (todo: IColumnState) => loadTodo(todo),
 };
 
 export default connect<StateProps, DispatchProps>(

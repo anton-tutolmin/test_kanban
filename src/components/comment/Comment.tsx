@@ -25,7 +25,7 @@ export const Comment: React.FC<CommentProps> = (props) => {
     setIsUpdating(false);
   }
 
-  function deleteCommentHandler(e: React.MouseEvent<HTMLButtonElement>) {
+  function deleteCommentHandler() {
     props.onDelete(props.comment.id);
   }
 
@@ -82,11 +82,11 @@ const UpdatingView: React.FC<UpdatingViewProps> = (props) => {
     setText(e.target.value);
   }
 
-  function saveHandler(e: React.MouseEvent<HTMLButtonElement>) {
+  function saveHandler() {
     props.onSave(text);
   }
 
-  function cancelHandler(e: React.MouseEvent<HTMLButtonElement>) {
+  function cancelHandler() {
     props.onClose();
   }
 

@@ -6,6 +6,7 @@ import TestColumn from "../components/columns/TestColumn";
 import DoneColumn from "../components/columns/DoneColumn";
 import Login from "../components/login/Login";
 import Popup from "../components/popup/Popup";
+import { Navbar } from "../components/navbar/Navbar";
 import "./App.scss";
 
 interface StateProps {
@@ -14,6 +15,7 @@ interface StateProps {
 
 interface DispatchProps {
   loadUser: (username: string) => void;
+  logout: () => void;
 }
 
 type Props = StateProps & DispatchProps;
@@ -29,13 +31,16 @@ const App: React.FC<Props> = (props) => {
   return (
     <>
       {props.username.length ? (
-        <div className="container desk">
-          <TodoColumn username={props.username} />
-          <InProgressColumn username={props.username} />
-          <TestColumn username={props.username} />
-          <DoneColumn username={props.username} />
-          <Popup />
-        </div>
+        <>
+          <Navbar logout={props.logout} />
+          <div className="container desk">
+            <TodoColumn username={props.username} />
+            <InProgressColumn username={props.username} />
+            <TestColumn username={props.username} />
+            <DoneColumn username={props.username} />
+            <Popup />
+          </div>
+        </>
       ) : (
         <Login />
       )}
@@ -49,6 +54,7 @@ const mapState = (state: any) => ({
 
 const mapDispatch = {
   loadUser: (username: string) => ({ type: "LOAD_USER", payload: username }),
+  logout: () => ({ type: "LOGOUT" }),
 };
 
 export default connect<StateProps, DispatchProps>(mapState, mapDispatch)(App);
