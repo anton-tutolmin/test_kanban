@@ -1,0 +1,39 @@
+.popup__backlog {
+  z-index: 10;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.popup {
+  position: relative;
+  width: 600px;
+  padding: 1rem;
+  margin: 0 auto;
+}
+
+.popup__wrapper {
+  z-index: 11;
+  position: absolute;
+  top: 60px;
+  width: 100%;
+}
+
+.popup__title {
+  border: none;
+  background: none;
+  &:focus {
+    background: white;
+  }
+}
+
+.description__text {
+  background-color: rgba(0, 0, 0, 0);
+  &:hover {
+    cursor: pointer;
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+}

@@ -1,0 +1,52 @@
+.cards_column {
+  min-width: 250px;
+  border-radius: 3px;
+}
+
+.column__title {
+  width: 100%;
+  border: none;
+  background: none;
+  font-weight: bold;
+  &:focus {
+    background: white;
+    border: 2px solid darkgray;
+    border-radius: 3px;
+    outline: none;
+  }
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+.column__add-card-btn {
+  width: 100%;
+  height: 30px;
+  margin-top: 1rem;
+  border-radius: 3px;
+  border: none;
+  background-color: rgba(0, 0, 0, 0);
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+  &:focus {
+    outline: none;
+  }
+}
+
+.cards_column__control_btns {
+  display: flex;
+  justify-content: left;
+
+  .btn {
+    width: 50%;
+  }
+
+  button {
+    margin-top: 0.5rem;
+    margin-right: 1rem;
+    &:focus {
+      outline: none;
+    }
+  }
+}
