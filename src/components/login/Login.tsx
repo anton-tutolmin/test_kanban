@@ -15,9 +15,15 @@ const Login: React.FC<DispatchProps> = (props) => {
     setUsername(e.target.value);
   }
 
-  function loginHandler(e: React.MouseEvent<HTMLButtonElement>) {
+  function loginHandler() {
     localStorageAgent.saveUsername(username);
     props.loadUser(username);
+  }
+
+  function keyPressHandler(e: React.KeyboardEvent) {
+    if (e.key === "Enter" && username.length > 0) {
+      props.loadUser(username);
+    }
   }
 
   return (
@@ -31,6 +37,7 @@ const Login: React.FC<DispatchProps> = (props) => {
             placeholder="Please, enter your name..."
             value={username}
             onChange={changeHandler}
+            onKeyDown={keyPressHandler}
           />
           <button
             type="button"

@@ -6,11 +6,14 @@ import {
   UPDATE_CARD,
   DELETE_CARD
 } from '../actions/actionTypes';
-import { IColumnState } from '../../types/types'
+import { IColumnState } from '../../types/types';
+import { localStorageAgent } from '../../agent/LocalStorageAgent';
+
+const test = localStorageAgent.loadTest();
 
 const initialState: IColumnState = {
-  title: 'test',
-  cards: []
+  title: test ? test.title : 'test',
+  cards: test ? test.cards : []
 }
 
 export default function doneCardReducer(state = initialState, action: any): IColumnState {

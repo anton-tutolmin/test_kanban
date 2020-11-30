@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { connect } from "react-redux";
 import { localStorageAgent } from "../../agent/LocalStorageAgent";
 import { Column } from "./Column";
@@ -26,14 +26,6 @@ interface OwnProps {
 type Props = StateProps & DispatchProps & OwnProps;
 
 const TodoColumn: React.FC<Props> = (props) => {
-  useEffect(() => {
-    const todo = localStorageAgent.loadTodo();
-
-    if (todo) {
-      props.loadTodo(todo);
-    }
-  }, []);
-
   function addCardHandler(title: string) {
     const newCard = {
       id: `${Math.random() + title}`,
