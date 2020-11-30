@@ -5,6 +5,7 @@ import {
   ADD_TEST_CARD,
   ADD_TODO_CARD,
   CLEAR_POPUP,
+  DELETE_CARD,
   LOAD_DONE,
   LOAD_INPROGRESS,
   LOAD_POPUP,
@@ -49,5 +50,6 @@ export const updatePopupDescription = (description: string) => ({
 
 export const updatePopupComments = (comments: IComment[]) => ({ type: SET_POPUP_COMMENTS, payload: comments });
 export const updateCard = (card: ICard) => ({ type: UPDATE_CARD, payload: card });
+export const deleteCard = (cardId: string) => ({type: DELETE_CARD, payload: cardId})
 
 export const clearPopup = () => ({ type: CLEAR_POPUP });

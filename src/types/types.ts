@@ -7,6 +7,7 @@ export interface IComment {
 
 export interface ICard {
   id: string;
+  key: string;
   title: string;
   description: string;
   author: string;

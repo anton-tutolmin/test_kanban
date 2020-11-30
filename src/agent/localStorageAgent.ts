@@ -1,43 +1,92 @@
-import { IComment } from '../types/types'
+import { ICard, IColumnState } from '../types/types'
 
 class LocalStrorageAgent {
-  public setTodoTitle(title: string) {
-    localStorage.setItem('todoTitle', title);
+  public saveTodo(todo: IColumnState): void {
+    localStorage.setItem('todo', JSON.stringify(todo));
   }
 
-  public getTodoTitle(): string | null {
-    return localStorage.getItem('todoTitle');
+  public loadTodo(): IColumnState | null {
+    const data = localStorage.getItem('todo');
+    if (data) {
+      return JSON.parse(data) as IColumnState;
+    } else {
+      return null;
+    }
   }
 
-  public setInProgressTitle(title: string) {
-    localStorage.setItem('inprogressTitle', title);
+  public saveInProgress(inProgress: IColumnState): void {
+    localStorage.setItem('inProgress', JSON.stringify(inProgress));
   }
 
-  public getInProgressTitle(): string | null {
-    return localStorage.getItem('inprogressTitle');
+  public loadInProgress(): IColumnState | null {
+    const data = localStorage.getItem('inProgress');
+    if (data) {
+      return JSON.parse(data) as IColumnState;
+    } else {
+      return null;
+    }
   }
 
-  public setTestTitle(title: string) {
-    localStorage.setItem('testTitle', title);
+  public saveTest(test: IColumnState): void {
+    localStorage.setItem('test', JSON.stringify(test));
   }
 
-  public getTestTitle(): string | null {
-    return localStorage.getItem('testTitle');
+  public loadTest(): IColumnState | null {
+    const data = localStorage.getItem('test');
+    if (data) {
+      return JSON.parse(data) as IColumnState;
+    } else {
+      return null;
+    }
   }
 
-  public setDoneTitle(title: string) {
-    localStorage.setItem('doneTitle', title);
+  public saveDone(done: IColumnState): void {
+    localStorage.setItem('done', JSON.stringify(done));
   }
 
-  public getDoneTitle(): string | null {
-    return localStorage.getItem('doneTitle');
+  public loadDone(): IColumnState | null {
+    const data = localStorage.getItem('done');
+    if (data) {
+      return JSON.parse(data) as IColumnState;
+    } else {
+      return null;
+    }
   }
 
-  public saveComment(comment: IComment) {
-    const data = localStorage.getItem('comments');
-    const comments = data ? JSON.parse(data) as IComment[] : [];
-    comments.push(comment);
-    localStorage.setItem('comments', JSON.stringify(comments));
+  public saveUsername(username: string): void {
+    localStorage.setItem('username', username);
+  }
+
+  public loadUsername(): string | null {
+    return localStorage.getItem('username');
+  }
+
+  public deleteUsername(): void {
+    return localStorage.removeItem('username');
+  }
+
+  public updateCard(card: ICard): void {
+    const data = localStorage.getItem(card.key);
+    if (data) {
+      const column = JSON.parse(data) as IColumnState;
+      column.cards = column.cards.map(c => {
+        if (c.id === card.id) {
+          return { ...card }
+        } else {
+          return c;
+        }
+      });
+      localStorage.setItem(card.key, JSON.stringify(column));
+    }
+  }
+
+  public deleteCard(card: ICard): void {
+    const data = localStorage.getItem(card.key);
+    if (data) {
+      const column = JSON.parse(data) as IColumnState;
+      column.cards = column.cards.filter(c => c.id !== card.id);
+      localStorage.setItem(card.key, JSON.stringify(column));
+    }
   }
 }
 

@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { connect } from "react-redux";
+import { localStorageAgent } from "../../agent/LocalStorageAgent";
 import { Column } from "./Column";
 import { IColumnState, ICard } from "../../types/types";
 import {
@@ -15,6 +16,7 @@ interface StateProps {
 interface DispatchProps {
   addTestCard: (card: ICard) => void;
   updateColumnTitle: (newTitle: string) => void;
+  loadTest: (test: IColumnState) => void;
 }
 
 interface OwnProps {
@@ -23,20 +25,36 @@ interface OwnProps {
 
 type Props = StateProps & DispatchProps & OwnProps;
 
-const TodoColumn: React.FC<Props> = (props) => {
+const TestColumn: React.FC<Props> = (props) => {
+  useEffect(() => {
+    const test = localStorageAgent.loadTest();
+
+    if (test) {
+      props.loadTest(test);
+    }
+  }, []);
+
   function addCardHandler(title: string) {
-    props.addTestCard({
+    const newCard = {
       id: `${Math.random() + title}`,
+      key: "test",
       title,
       author: props.username,
       description: "",
-      column: "test",
+      column: props.test.title,
       comments: [],
-    });
+    };
+
+    const cards = [...props.test.cards, newCard];
+
+    localStorageAgent.saveTest({ ...props.test, cards });
+
+    props.addTestCard(newCard);
   }
 
-  function updateColumnTitleHandler(newTitle: string) {
-    props.updateColumnTitle(newTitle);
+  function updateColumnTitleHandler(title: string) {
+    localStorageAgent.saveTest({ ...props.test, title });
+    props.updateColumnTitle(title);
   }
 
   return (
@@ -62,4 +80,4 @@ const mapDispatch = {
 export default connect<StateProps, DispatchProps>(
   mapState,
   mapDispatch
-)(TodoColumn);
+)(TestColumn);

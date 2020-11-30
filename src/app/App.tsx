@@ -7,6 +7,7 @@ import DoneColumn from "../components/columns/DoneColumn";
 import Login from "../components/login/Login";
 import Popup from "../components/popup/Popup";
 import { Navbar } from "../components/navbar/Navbar";
+import { localStorageAgent } from "../agent/LocalStorageAgent";
 import "./App.scss";
 
 interface StateProps {
@@ -22,7 +23,7 @@ type Props = StateProps & DispatchProps;
 
 const App: React.FC<Props> = (props) => {
   useEffect(() => {
-    const username = localStorage.getItem("username");
+    const username = localStorageAgent.loadUsername();
     if (username) {
       props.loadUser(username);
     }

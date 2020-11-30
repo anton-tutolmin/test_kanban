@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { connect } from "react-redux";
+import { localStorageAgent } from "../../agent/LocalStorageAgent";
 import { ICard, IComment } from "../../types/types";
 import { PopupDescription } from "./PopupDescription";
 import { PopupComments } from "./PopupComments";
@@ -9,6 +10,7 @@ import {
   updatePopupComments,
   updateCard,
   clearPopup,
+  deleteCard,
 } from "../../store/actions/actions";
 import "./Popup.scss";
 
@@ -23,6 +25,7 @@ interface DispatchProps {
   updateComments: (comments: IComment[]) => void;
   updateCard: (card: ICard) => void;
   clearPopup: () => void;
+  deleteCard: (cardId: string) => void;
 }
 
 type Props = StateProps & DispatchProps;
@@ -56,12 +59,13 @@ const Popup: React.FC<Props> = (props) => {
     setCardTitle(e.target.value);
   }
 
-  function titleKeyPressHandler(e: React.KeyboardEvent) {
+  function keyPressHandler(e: React.KeyboardEvent) {
     if (e.key === "Enter") {
       if (cardTitle.length > 0) {
         cardTitleRef.current?.blur();
         props.updateTitle(cardTitle);
         props.updateCard({ ...props.card, title: cardTitle });
+        localStorageAgent.updateCard({ ...props.card, title: cardTitle });
       } else {
         setCardTitle(props.card.title);
       }
@@ -71,6 +75,10 @@ const Popup: React.FC<Props> = (props) => {
   function updateDescriptionHandler(newDescription: string) {
     props.updateDescription(newDescription);
     props.updateCard({ ...props.card, description: newDescription });
+    localStorageAgent.updateCard({
+      ...props.card,
+      description: newDescription,
+    });
   }
 
   function addCommentHandler(text: string) {
@@ -85,6 +93,7 @@ const Popup: React.FC<Props> = (props) => {
 
     props.updateComments(comments);
     props.updateCard({ ...props.card, comments });
+    localStorageAgent.updateCard({ ...props.card, comments });
   }
 
   function updateCommentHandler(commentId: string, text: string) {
@@ -94,6 +103,7 @@ const Popup: React.FC<Props> = (props) => {
 
     props.updateComments(comments);
     props.updateCard({ ...props.card, comments });
+    localStorageAgent.updateCard({ ...props.card, comments });
   }
 
   function deleteCommentHandler(commentId: string) {
@@ -103,6 +113,13 @@ const Popup: React.FC<Props> = (props) => {
 
     props.updateComments(comments);
     props.updateCard({ ...props.card, comments });
+    localStorageAgent.updateCard({ ...props.card, comments });
+  }
+
+  function deleteCardHandler() {
+    props.deleteCard(props.card.id);
+    localStorageAgent.deleteCard(props.card);
+    props.clearPopup();
   }
 
   return (
@@ -124,7 +141,7 @@ const Popup: React.FC<Props> = (props) => {
               className="popup__title h4"
               onChange={changeTitleHandler}
               ref={cardTitleRef}
-              onKeyDown={titleKeyPressHandler}
+              onKeyDown={keyPressHandler}
             />
           </div>
           <div className="title__column-name">
@@ -134,6 +151,15 @@ const Popup: React.FC<Props> = (props) => {
           <div className="title__author">
             <span className="text-secondary">author</span>
             <strong>{` ${props.card.author}`}</strong>
+          </div>
+          <div className="title__delete-btn">
+            <button
+              type="button"
+              className="btn btn-danger"
+              onClick={deleteCardHandler}
+            >
+              Delete
+            </button>
           </div>
           <PopupDescription
             description={props.card.description}
@@ -165,6 +191,7 @@ const mapDispatch = {
   updateComments: (comments: IComment[]) => updatePopupComments(comments),
   updateCard: (card: ICard) => updateCard(card),
   clearPopup: () => clearPopup(),
+  deleteCard: (cardId: string) => deleteCard(cardId),
 };
 
 export default connect<StateProps, DispatchProps>(mapState, mapDispatch)(Popup);

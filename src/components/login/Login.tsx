@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { connect } from "react-redux";
 import { loadUser } from "../../store/actions/actions";
+import { localStorageAgent } from "../../agent/LocalStorageAgent";
 import "./Login.scss";
 
 interface DispatchProps {
@@ -15,7 +16,7 @@ const Login: React.FC<DispatchProps> = (props) => {
   }
 
   function loginHandler(e: React.MouseEvent<HTMLButtonElement>) {
-    localStorage.setItem("username", username);
+    localStorageAgent.saveUsername(username);
     props.loadUser(username);
   }
 

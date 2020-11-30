@@ -1,4 +1,11 @@
-import { ADD_DONE_CARD, LOAD_DONE, REMOVE_DONE_CARD, UPDATE_TITLE_DONE, UPDATE_CARD } from "../actions/actionTypes";
+import {
+  ADD_DONE_CARD,
+  LOAD_DONE,
+  REMOVE_DONE_CARD,
+  UPDATE_TITLE_DONE,
+  UPDATE_CARD,
+  DELETE_CARD
+} from "../actions/actionTypes";
 import { IColumnState } from '../../types/types'
 
 const initialState: IColumnState = {
@@ -25,6 +32,10 @@ export default function doneCardReducer(state = initialState, action: any): ICol
         }
       });
       return {...state, cards};
+    };
+    case DELETE_CARD: {
+      const cards = state.cards.filter(card => card.id !== action.payload);
+      return { ...state, cards };
     };
     default: return state;
   }

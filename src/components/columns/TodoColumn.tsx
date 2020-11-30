@@ -1,5 +1,6 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
+import { localStorageAgent } from "../../agent/LocalStorageAgent";
 import { Column } from "./Column";
 import { IColumnState, ICard } from "../../types/types";
 import {
@@ -25,19 +26,35 @@ interface OwnProps {
 type Props = StateProps & DispatchProps & OwnProps;
 
 const TodoColumn: React.FC<Props> = (props) => {
+  useEffect(() => {
+    const todo = localStorageAgent.loadTodo();
+
+    if (todo) {
+      props.loadTodo(todo);
+    }
+  }, []);
+
   function addCardHandler(title: string) {
-    props.addTodoCard({
+    const newCard = {
       id: `${Math.random() + title}`,
+      key: "todo",
       title,
       author: props.username,
       description: "",
-      column: "todo",
+      column: props.todo.title,
       comments: [],
-    });
+    };
+
+    const cards = [...props.todo.cards, newCard];
+
+    localStorageAgent.saveTodo({ ...props.todo, cards });
+
+    props.addTodoCard(newCard);
   }
 
-  function updateColumnTitleHandler(newTitle: string) {
-    props.updateColumnTitle(newTitle);
+  function updateColumnTitleHandler(title: string) {
+    localStorageAgent.saveTodo({ ...props.todo, title });
+    props.updateColumnTitle(title);
   }
 
   return (

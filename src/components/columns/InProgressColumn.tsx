@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { connect } from "react-redux";
+import { localStorageAgent } from "../../agent/LocalStorageAgent";
 import { Column } from "./Column";
 import { IColumnState, ICard } from "../../types/types";
 import {
@@ -15,6 +16,7 @@ interface StateProps {
 interface DispatchProps {
   addInProgressCard: (card: ICard) => void;
   updateColumnTitle: (newTitle: string) => void;
+  loadInProgress: (inProgress: IColumnState) => void;
 }
 
 interface OwnProps {
@@ -23,20 +25,35 @@ interface OwnProps {
 
 type Props = StateProps & DispatchProps & OwnProps;
 
-const TodoColumn: React.FC<Props> = (props) => {
+const InProgressColumn: React.FC<Props> = (props) => {
+  useEffect(() => {
+    const inProgress = localStorageAgent.loadInProgress();
+    if (inProgress) {
+      props.loadInProgress(inProgress);
+    }
+  }, []);
+
   function addCardHandler(title: string) {
-    props.addInProgressCard({
+    const newCard = {
       id: `${Math.random() + title}`,
+      key: "inProgress",
       title,
       author: props.username,
       description: "",
-      column: "in progress",
+      column: props.inProgress.title,
       comments: [],
-    });
+    };
+
+    const cards = [...props.inProgress.cards, newCard];
+
+    localStorageAgent.saveInProgress({ ...props.inProgress, cards });
+
+    props.addInProgressCard(newCard);
   }
 
-  function updateColumnTitleHandler(newTitle: string) {
-    props.updateColumnTitle(newTitle);
+  function updateColumnTitleHandler(title: string) {
+    localStorageAgent.saveInProgress({ ...props.inProgress, title });
+    props.updateColumnTitle(title);
   }
 
   return (
@@ -62,4 +79,4 @@ const mapDispatch = {
 export default connect<StateProps, DispatchProps>(
   mapState,
   mapDispatch
-)(TodoColumn);
+)(InProgressColumn);

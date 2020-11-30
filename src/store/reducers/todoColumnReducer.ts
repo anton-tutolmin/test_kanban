@@ -1,4 +1,4 @@
-import { LOAD_TODO, ADD_TODO_CARD, REMOVE_TODO_CARD, UPDATE_TITLE_TODO, UPDATE_CARD } from '../actions/actionTypes';
+import { LOAD_TODO, ADD_TODO_CARD, REMOVE_TODO_CARD, UPDATE_TITLE_TODO, UPDATE_CARD, DELETE_CARD } from '../actions/actionTypes';
 import { IColumnState } from '../../types/types'
 
 const initialState: IColumnState = {
@@ -9,22 +9,26 @@ const initialState: IColumnState = {
 export default function doneCardReducer(state = initialState, action: any): IColumnState {
   switch(action.type) {
     case LOAD_TODO:
-      return {...action.payload};
+      return { ...action.payload };
     case ADD_TODO_CARD:
-      return {...state, cards: state.cards.concat(action.payload)};
+      return { ...state, cards: state.cards.concat(action.payload) };
     case REMOVE_TODO_CARD:
-      return {...state, cards: state.cards.filter((c:any) => c !== action.payload)};
+      return { ...state, cards: state.cards.filter((c:any) => c !== action.payload) };
     case UPDATE_TITLE_TODO:
-      return {...state, title: action.payload};
+      return { ...state, title: action.payload };
     case UPDATE_CARD: {
       const cards = state.cards.map(card => {
         if (card.id === action.payload.id) {
-          return {...action.payload}
+          return { ...action.payload }
         } else {
           return card;
         }
       });
-      return {...state, cards};
+      return { ...state, cards };
+    };
+    case DELETE_CARD: {
+      const cards = state.cards.filter(card => card.id !== action.payload);
+      return { ...state, cards };
     };
     default: return state;
   }

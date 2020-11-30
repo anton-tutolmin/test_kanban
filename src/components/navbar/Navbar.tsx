@@ -1,4 +1,5 @@
 import React from "react";
+import { localStorageAgent } from "../../agent/LocalStorageAgent";
 
 interface NavparProps {
   logout(): void;
@@ -6,7 +7,7 @@ interface NavparProps {
 
 export const Navbar: React.FC<NavparProps> = (props) => {
   function logout() {
-    localStorage.removeItem("username");
+    localStorageAgent.deleteUsername();
     props.logout();
   }
 
