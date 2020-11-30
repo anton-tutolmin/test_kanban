@@ -6,11 +6,14 @@ import {
   UPDATE_CARD,
   DELETE_CARD
 } from "../actions/actionTypes";
-import { IColumnState } from '../../types/types'
+import { IColumnState } from '../../types/types';
+import { localStorageAgent } from '../../agent/LocalStorageAgent';
+
+const inProgress = localStorageAgent.loadInProgress();
 
 const initialState: IColumnState = {
-  title: 'in progress',
-  cards: []
+  title: inProgress ? inProgress.title : 'in progress',
+  cards: inProgress ? inProgress.cards : []
 }
 
 export default function doneCardReducer(state = initialState, action: any): IColumnState {

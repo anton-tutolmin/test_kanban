@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { connect } from "react-redux";
 import { localStorageAgent } from "../../agent/LocalStorageAgent";
 import { Column } from "./Column";
@@ -26,14 +26,6 @@ interface OwnProps {
 type Props = StateProps & DispatchProps & OwnProps;
 
 const TestColumn: React.FC<Props> = (props) => {
-  useEffect(() => {
-    const test = localStorageAgent.loadTest();
-
-    if (test) {
-      props.loadTest(test);
-    }
-  }, []);
-
   function addCardHandler(title: string) {
     const newCard = {
       id: `${Math.random() + title}`,
