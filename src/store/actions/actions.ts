@@ -19,12 +19,14 @@ import {
   UPDATE_TITLE_DONE,
   UPDATE_TITLE_INPROGRESS,
   UPDATE_TITLE_TEST,
-  UPDATE_TITLE_TODO
+  UPDATE_TITLE_TODO,
+  LOGOUT
 } from './actionTypes';
 
 export const loadPopup = (card: ICard) => ({ type: LOAD_POPUP, payload: card });
 
 export const loadUser = (username: string) => ({type: LOAD_USER, payload: username});
+export const logout = () => ({type: LOGOUT})
 
 export const loadTodo = (todo: IColumnState) => ({ type: LOAD_TODO, payload: todo });
 export const loadInProgress = (inProgress: IColumnState) => ({ type: LOAD_INPROGRESS, payload: inProgress });

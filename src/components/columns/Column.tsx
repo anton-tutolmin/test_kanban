@@ -35,6 +35,8 @@ export const Column: React.FC<ColumnProps> = (props) => {
   function blurHandler() {
     if (title.length === 0) {
       setTitle(props.title);
+    } else {
+      props.onUpdateTitle(title);
     }
   }
 
@@ -95,7 +97,7 @@ const CreatingView: React.FC<CreatingViewProps> = (props) => {
     textareaRef.current?.focus();
   }, []);
 
-  function titleChangeHandler(e: React.ChangeEvent<HTMLTextAreaElement>): void {
+  function changeHandler(e: React.ChangeEvent<HTMLTextAreaElement>): void {
     setTitle(e.target.value);
   }
 
@@ -112,7 +114,7 @@ const CreatingView: React.FC<CreatingViewProps> = (props) => {
         id="card-title"
         value={title}
         placeholder="Enter card's title"
-        onChange={titleChangeHandler}
+        onChange={changeHandler}
         onKeyDown={keyPressHandler}
         ref={textareaRef}
       />

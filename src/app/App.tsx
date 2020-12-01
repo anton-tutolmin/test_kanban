@@ -1,13 +1,13 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { connect } from "react-redux";
+import Login from "../components/login/Login";
+import { Navbar } from "../components/navbar/Navbar";
 import TodoColumn from "../components/columns/TodoColumn";
 import InProgressColumn from "../components/columns/InProgressColumn";
 import TestColumn from "../components/columns/TestColumn";
 import DoneColumn from "../components/columns/DoneColumn";
-import Login from "../components/login/Login";
 import Popup from "../components/popup/Popup";
-import { Navbar } from "../components/navbar/Navbar";
-import { localStorageAgent } from "../agent/LocalStorageAgent";
+import { loadUser, logout } from "../store/actions/actions";
 import "./App.scss";
 
 interface StateProps {
@@ -22,13 +22,6 @@ interface DispatchProps {
 type Props = StateProps & DispatchProps;
 
 const App: React.FC<Props> = (props) => {
-  useEffect(() => {
-    const username = localStorageAgent.loadUsername();
-    if (username) {
-      props.loadUser(username);
-    }
-  }, []);
-
   return (
     <>
       {props.username.length ? (
@@ -54,8 +47,8 @@ const mapState = (state: any) => ({
 });
 
 const mapDispatch = {
-  loadUser: (username: string) => ({ type: "LOAD_USER", payload: username }),
-  logout: () => ({ type: "LOGOUT" }),
+  loadUser: (username: string) => loadUser(username),
+  logout: () => logout(),
 };
 
 export default connect<StateProps, DispatchProps>(mapState, mapDispatch)(App);

@@ -1,8 +1,8 @@
 import React, { useRef } from "react";
 import { connect } from "react-redux";
-import { PencilIcon } from "../icons/PencilIcon";
 import { ICard } from "../../types/types";
 import { loadPopup } from "../../store/actions/actions";
+import { PencilIcon } from "../icons/PencilIcon";
 import "./Card.scss";
 
 interface DispatchProps {

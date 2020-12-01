@@ -1,8 +1,11 @@
 import { LOAD_USER, LOGOUT } from "../actions/actionTypes";
 import { IUserState } from '../../types/types';
+import { localStorageAgent } from '../../agent/LocalStorageAgent';
+
+const username = localStorageAgent.loadUsername();
 
 const initialState: IUserState = {
-  username: ''
+  username: username ? username : '',
 }
 
 export default function userReducer(state = initialState, action: any): IUserState {
