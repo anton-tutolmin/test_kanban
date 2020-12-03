@@ -26,7 +26,7 @@ interface OwnProps {
 type Props = StateProps & DispatchProps & OwnProps;
 
 const InProgressColumn: React.FC<Props> = (props) => {
-  function addCardHandler(title: string) {
+  function addCardHandler(title: string): void {
     const newCard = {
       id: `${Math.random() + title}`,
       key: "inProgress",
@@ -44,7 +44,7 @@ const InProgressColumn: React.FC<Props> = (props) => {
     props.addInProgressCard(newCard);
   }
 
-  function updateColumnTitleHandler(title: string) {
+  function updateColumnTitleHandler(title: string): void {
     localStorageAgent.saveInProgress({ ...props.inProgress, title });
     props.updateColumnTitle(title);
   }

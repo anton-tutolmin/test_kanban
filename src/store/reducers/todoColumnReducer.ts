@@ -1,13 +1,6 @@
-import {
-  LOAD_TODO,
-  ADD_TODO_CARD,
-  REMOVE_TODO_CARD,
-  UPDATE_TITLE_TODO,
-  UPDATE_CARD,
-  DELETE_CARD
-} from '../actions/actionTypes';
-import { IColumnState } from '../../types/types'
+import { IColumnState, ICard } from '../../types/types'
 import { localStorageAgent } from '../../agent/LocalStorageAgent';
+import { LOAD_TODO, ADD_TODO_CARD, UPDATE_TITLE_TODO, UPDATE_CARD, DELETE_CARD } from '../actions/actionTypes';
 
 const todo = localStorageAgent.loadTodo();
 
@@ -22,12 +15,10 @@ export default function doneCardReducer(state: any = initialState, action: any):
       return { ...action.payload };
     case ADD_TODO_CARD:
       return { ...state, cards: state.cards.concat(action.payload) };
-    case REMOVE_TODO_CARD:
-      return { ...state, cards: state.cards.filter((c:any) => c !== action.payload) };
     case UPDATE_TITLE_TODO:
       return { ...state, title: action.payload };
     case UPDATE_CARD: {
-      const cards = state.cards.map((card: any) => {
+      const cards = state.cards.map((card: ICard) => {
         if (card.id === action.payload.id) {
           return { ...action.payload }
         } else {
@@ -37,7 +28,7 @@ export default function doneCardReducer(state: any = initialState, action: any):
       return { ...state, cards };
     };
     case DELETE_CARD: {
-      const cards = state.cards.filter((card: any) => card.id !== action.payload);
+      const cards = state.cards.filter((card: ICard) => card.id !== action.payload);
       return { ...state, cards };
     };
     default: return state;

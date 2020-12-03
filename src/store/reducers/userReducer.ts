@@ -1,6 +1,6 @@
-import { LOAD_USER, LOGOUT } from "../actions/actionTypes";
 import { IUserState } from '../../types/types';
 import { localStorageAgent } from '../../agent/LocalStorageAgent';
+import { LOAD_USER, LOGOUT } from "../actions/actionTypes";
 
 const username = localStorageAgent.loadUsername();
 

@@ -38,7 +38,6 @@ export const addInProgressCard = (card: ICard) => ({ type: ADD_INPROGRESS_CARD, 
 export const addTodoCard = (card: ICard) => ({ type: ADD_TODO_CARD, payload: card });
 export const addTestCard = (card: ICard) => ({ type: ADD_TEST_CARD, payload: card });
 
-
 export const updateDoneTitle = (title: string) => ({ type: UPDATE_TITLE_DONE,payload: title });
 export const updateInProgressTitle = (title: string) => ({ type: UPDATE_TITLE_INPROGRESS, payload: title });
 export const updateTodoTitle = (title: string) => ({ type: UPDATE_TITLE_TODO, payload: title });

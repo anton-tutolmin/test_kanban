@@ -26,7 +26,7 @@ interface OwnProps {
 type Props = StateProps & DispatchProps & OwnProps;
 
 const DoneColumn: React.FC<Props> = (props) => {
-  function addCardHandler(title: string) {
+  function addCardHandler(title: string): void {
     const newCard = {
       id: `${Math.random() + title}`,
       key: "done",
@@ -44,7 +44,7 @@ const DoneColumn: React.FC<Props> = (props) => {
     props.addDoneCard(newCard);
   }
 
-  function updateColumnTitleHandler(title: string) {
+  function updateColumnTitleHandler(title: string): void {
     localStorageAgent.saveDone({ ...props.done, title });
     props.updateColumnTitle(title);
   }

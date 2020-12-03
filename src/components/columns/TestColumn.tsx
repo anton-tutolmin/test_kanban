@@ -26,7 +26,7 @@ interface OwnProps {
 type Props = StateProps & DispatchProps & OwnProps;
 
 const TestColumn: React.FC<Props> = (props) => {
-  function addCardHandler(title: string) {
+  function addCardHandler(title: string): void {
     const newCard = {
       id: `${Math.random() + title}`,
       key: "test",
@@ -44,7 +44,7 @@ const TestColumn: React.FC<Props> = (props) => {
     props.addTestCard(newCard);
   }
 
-  function updateColumnTitleHandler(title: string) {
+  function updateColumnTitleHandler(title: string): void {
     localStorageAgent.saveTest({ ...props.test, title });
     props.updateColumnTitle(title);
   }

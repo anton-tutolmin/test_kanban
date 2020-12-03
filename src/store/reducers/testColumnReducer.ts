@@ -1,13 +1,6 @@
-import {
-  LOAD_TEST,
-  ADD_TEST_CARD,
-  REMOVE_TEST_CARD,
-  UPDATE_TITLE_TEST,
-  UPDATE_CARD,
-  DELETE_CARD
-} from '../actions/actionTypes';
-import { IColumnState } from '../../types/types';
+import { IColumnState, ICard } from '../../types/types';
 import { localStorageAgent } from '../../agent/LocalStorageAgent';
+import { LOAD_TEST, ADD_TEST_CARD, UPDATE_TITLE_TEST, UPDATE_CARD, DELETE_CARD } from '../actions/actionTypes';
 
 const test = localStorageAgent.loadTest();
 
@@ -22,12 +15,10 @@ export default function doneCardReducer(state = initialState, action: any): ICol
       return {...action.payload};
     case ADD_TEST_CARD:
       return {...state, cards: state.cards.concat(action.payload)};
-    case REMOVE_TEST_CARD:
-      return {...state, cards: state.cards.filter((c:any) => c !== action.payload)};
     case UPDATE_TITLE_TEST:
       return {...state, title: action.payload};
     case UPDATE_CARD: {
-      const cards = state.cards.map(card => {
+      const cards = state.cards.map((card: ICard) => {
         if (card.id === action.payload.id) {
           return {...action.payload}
         } else {
