@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import { Comment } from "../comment/Comment";
-import { IComment } from "../../types/types";
+import React, { useState } from 'react';
+import { Comment } from '../comment/Comment';
+import { IComment } from '../../types/types';
 
 interface CommentsProps {
   comments: IComment[];
@@ -10,8 +10,8 @@ interface CommentsProps {
   onDelete(commentId: string): void;
 }
 
-export const PopupComments: React.FC<CommentsProps> = (props) => {
-  const [comment, setComment] = useState<string>("");
+export const PopupComments: React.FC<CommentsProps> = ({ comments, username, onAdd, onUpdate, onDelete }) => {
+  const [comment, setComment] = useState<string>('');
 
   function changeHandler(e: React.ChangeEvent<HTMLInputElement>): void {
     setComment(e.target.value);
@@ -19,8 +19,8 @@ export const PopupComments: React.FC<CommentsProps> = (props) => {
 
   function addCommentHandler() {
     if (comment.length > 0) {
-      props.onAdd(comment);
-      setComment("");
+      onAdd(comment);
+      setComment('');
     }
   }
 
@@ -37,23 +37,13 @@ export const PopupComments: React.FC<CommentsProps> = (props) => {
           value={comment}
           onChange={changeHandler}
         />
-        <button
-          type="button"
-          className="btn btn-success mt-md-1"
-          onClick={addCommentHandler}
-        >
+        <button type="button" className="btn btn-success mt-md-1" onClick={addCommentHandler}>
           Add
         </button>
       </div>
       <div className="comments__list">
-        {props.comments.map((c) => (
-          <Comment
-            key={c.id}
-            comment={c}
-            username={props.username}
-            onUpdate={props.onUpdate}
-            onDelete={props.onDelete}
-          />
+        {comments.map((c) => (
+          <Comment key={c.id} comment={c} username={username} onUpdate={onUpdate} onDelete={onDelete} />
         ))}
       </div>
     </div>

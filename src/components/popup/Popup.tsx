@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useRef } from "react";
-import { connect } from "react-redux";
-import { localStorageAgent } from "../../agent/LocalStorageAgent";
-import { ICard, IComment } from "../../types/types";
-import { PopupDescription } from "./PopupDescription";
-import { PopupComments } from "./PopupComments";
+import React, { useState, useEffect, useRef } from 'react';
+import { connect } from 'react-redux';
+import { localStorageAgent } from '../../agent/LocalStorageAgent';
+import { ICard, IComment, IPopupState } from '../../types/types';
+import { PopupDescription } from './PopupDescription';
+import { PopupComments } from './PopupComments';
 import {
   updatePopupTitle,
   updatePopupDescription,
@@ -11,11 +11,11 @@ import {
   updateCard,
   clearPopup,
   deleteCard,
-} from "../../store/actions/actions";
-import "./Popup.scss";
+} from '../../store/actions/actions';
+import './Popup.scss';
 
 interface StateProps {
-  card: ICard;
+  popupData: IPopupState;
   username: string;
 }
 
@@ -23,151 +23,146 @@ interface DispatchProps {
   updateTitle: (newTitle: string) => void;
   updateDescription: (newDescription: string) => void;
   updateComments: (comments: IComment[]) => void;
-  updateCard: (card: ICard) => void;
+  updateInState: (popupData: IPopupState) => void;
+  deleteFromState: (cardId: string) => void;
   clearPopup: () => void;
-  deleteCard: (cardId: string) => void;
 }
 
 type Props = StateProps & DispatchProps;
 
-const Popup: React.FC<Props> = (props) => {
-  if (props.card.title === "") return null;
+const Popup: React.FC<Props> = ({
+  popupData,
+  username,
+  updateTitle,
+  updateDescription,
+  updateComments,
+  updateInState,
+  deleteFromState,
+  clearPopup,
+}) => {
+  if (popupData.cardTitle === '') return null;
 
-  const [cardTitle, setCardTitle] = useState<string>(props.card.title);
+  const [popupTitle, setPopupTitle] = useState<string>(popupData.cardTitle);
 
   const cardTitleRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    function closePopupOnEsc(e: KeyboardEvent) {
-      if (e.key === "Escape") {
-        props.clearPopup();
-      }
-    }
-
-    window.addEventListener("keydown", closePopupOnEsc);
+    window.addEventListener('keydown', closePopupOnEsc);
 
     return () => {
-      window.removeEventListener("keydown", closePopupOnEsc);
+      window.removeEventListener('keydown', closePopupOnEsc);
     };
   }, []);
 
+  function closePopupOnEsc(e: KeyboardEvent) {
+    if (e.key === 'Escape') {
+      clearPopup();
+    }
+  }
+
   function closePopup() {
-    props.clearPopup();
+    clearPopup();
   }
 
   function changeTitleHandler(e: React.ChangeEvent<HTMLInputElement>) {
-    setCardTitle(e.target.value);
+    setPopupTitle(e.target.value);
   }
 
-  function keyPressHandler(e: React.KeyboardEvent) {
-    if (e.key === "Enter") {
-      if (cardTitle.length > 0) {
+  function updateTitleHandler(e: React.KeyboardEvent) {
+    if (e.key === 'Enter') {
+      if (popupTitle.length > 0) {
         cardTitleRef.current?.blur();
-        props.updateTitle(cardTitle);
-        props.updateCard({ ...props.card, title: cardTitle });
-        localStorageAgent.updateCard({ ...props.card, title: cardTitle });
+        updateTitle(popupTitle);
+        updateInState({ ...popupData, cardTitle: popupTitle });
+        localStorageAgent.updateCard({ ...popupData, cardTitle: popupTitle });
       } else {
-        setCardTitle(props.card.title);
+        setPopupTitle(popupData.cardTitle);
       }
     }
   }
 
   function updateDescriptionHandler(newDescription: string) {
-    props.updateDescription(newDescription);
-    props.updateCard({ ...props.card, description: newDescription });
+    updateDescription(newDescription);
+    updateInState({ ...popupData, cardDescription: newDescription });
     localStorageAgent.updateCard({
-      ...props.card,
-      description: newDescription,
+      ...popupData,
+      cardDescription: newDescription,
     });
   }
 
   function addCommentHandler(text: string) {
-    const newComment = {
-      id: `${Math.random() + text.length}`,
-      cardId: props.card.id,
-      author: props.username,
+    const newComment: IComment = {
+      id: `${Date.now()}`,
+      cardId: popupData.cardId,
+      author: username,
       text,
     };
 
-    const comments = [...props.card.comments, newComment];
+    const cardComments: IComment[] = [...popupData.cardComments, newComment];
 
-    props.updateComments(comments);
-    props.updateCard({ ...props.card, comments });
-    localStorageAgent.updateCard({ ...props.card, comments });
+    updateComments(cardComments);
+    updateInState({ ...popupData, cardComments });
+    localStorageAgent.updateCard({ ...popupData, cardComments });
   }
 
   function updateCommentHandler(commentId: string, text: string) {
-    const comments = props.card.comments.map((comment) => {
+    const comments = popupData.cardComments.map((comment) => {
       return comment.id === commentId ? { ...comment, text } : comment;
     });
 
-    props.updateComments(comments);
-    props.updateCard({ ...props.card, comments });
-    localStorageAgent.updateCard({ ...props.card, comments });
+    updateComments(comments);
+    updateInState({ ...popupData, cardComments: comments });
+    localStorageAgent.updateCard({ ...popupData, cardComments: comments });
   }
 
   function deleteCommentHandler(commentId: string) {
-    const comments = props.card.comments.filter(
-      (comment) => comment.id !== commentId
-    );
+    const cardComments = popupData.cardComments.filter((comment) => comment.id !== commentId);
 
-    props.updateComments(comments);
-    props.updateCard({ ...props.card, comments });
-    localStorageAgent.updateCard({ ...props.card, comments });
+    updateComments(cardComments);
+    updateInState({ ...popupData, cardComments });
+    localStorageAgent.updateCard({ ...popupData, cardComments });
   }
 
   function deleteCardHandler() {
-    props.deleteCard(props.card.id);
-    localStorageAgent.deleteCard(props.card);
-    props.clearPopup();
+    deleteFromState(popupData.cardId);
+    localStorageAgent.deleteCard(popupData.cardId, popupData.cardKey);
+    clearPopup();
   }
 
   return (
     <>
       <div className="popup__wrapper">
         <div className="popup bg-light rounded">
-          <button
-            type="button"
-            className="close"
-            aria-label="Close"
-            onClick={closePopup}
-          >
+          <button type="button" className="close" aria-label="Close" onClick={closePopup}>
             <span aria-hidden="true">&times;</span>
           </button>
           <div>
             <input
               type="text"
-              value={cardTitle}
+              value={popupTitle}
               className="popup__title h4"
               onChange={changeTitleHandler}
               ref={cardTitleRef}
-              onKeyDown={keyPressHandler}
+              onKeyDown={updateTitleHandler}
             />
-          </div>
-          <div className="title__column-name">
-            <span className="text-secondary">in column</span>
-            <strong>{` ${props.card.column}`}</strong>
           </div>
           <div className="title__author">
             <span className="text-secondary">author</span>
-            <strong>{` ${props.card.author}`}</strong>
+            <strong>{` ${popupData.cardAuthor}`}</strong>
+          </div>
+          <div className="title__author">
+            <span className="text-secondary">column</span>
+            <strong>{` ${popupData.columnTitle}`}</strong>
           </div>
           <div className="title__delete-btn">
-            <button
-              type="button"
-              className="btn btn-danger"
-              onClick={deleteCardHandler}
-            >
+            <button type="button" className="btn btn-danger" onClick={deleteCardHandler}>
               Delete
             </button>
           </div>
-          <PopupDescription
-            description={props.card.description}
-            onUpdate={updateDescriptionHandler}
-          />
+          <PopupDescription description={popupData.cardDescription} onUpdate={updateDescriptionHandler} />
           <PopupComments
-            comments={props.card.comments}
-            username={props.username}
+            comments={popupData.cardComments}
+            username={username}
             onAdd={addCommentHandler}
             onUpdate={updateCommentHandler}
             onDelete={deleteCommentHandler}
@@ -180,18 +175,17 @@ const Popup: React.FC<Props> = (props) => {
 };
 
 const mapState = (state: any) => ({
-  card: state.popup,
+  popupData: state.popup,
   username: state.user.username,
 });
 
 const mapDispatch = {
   updateTitle: (newTitle: string) => updatePopupTitle(newTitle),
-  updateDescription: (newDescription: string) =>
-    updatePopupDescription(newDescription),
+  updateDescription: (newDescription: string) => updatePopupDescription(newDescription),
   updateComments: (comments: IComment[]) => updatePopupComments(comments),
-  updateCard: (card: ICard) => updateCard(card),
+  updateInState: (popupDate: IPopupState) => updateCard(popupDate),
+  deleteFromState: (cardId: string) => deleteCard(cardId),
   clearPopup: () => clearPopup(),
-  deleteCard: (cardId: string) => deleteCard(cardId),
 };
 
 export default connect<StateProps, DispatchProps>(mapState, mapDispatch)(Popup);

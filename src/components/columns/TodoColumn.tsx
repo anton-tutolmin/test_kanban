@@ -1,13 +1,9 @@
-import React from "react";
-import { connect } from "react-redux";
-import { localStorageAgent } from "../../agent/LocalStorageAgent";
-import { Column } from "./Column";
-import { IColumnState, ICard } from "../../types/types";
-import {
-  addTodoCard,
-  updateTodoTitle,
-  loadTodo,
-} from "../../store/actions/actions";
+import React from 'react';
+import { connect } from 'react-redux';
+import { localStorageAgent } from '../../agent/LocalStorageAgent';
+import { Column } from './Column';
+import { IColumnState, ICard } from '../../types/types';
+import { addTodoCard, updateTodoTitle, loadTodo } from '../../store/actions/actions';
 
 interface StateProps {
   todo: IColumnState;
@@ -16,7 +12,6 @@ interface StateProps {
 interface DispatchProps {
   addTodoCard: (card: ICard) => void;
   updateColumnTitle: (newTitle: string) => void;
-  loadTodo: (todoData: IColumnState) => void;
 }
 
 interface OwnProps {
@@ -25,37 +20,26 @@ interface OwnProps {
 
 type Props = StateProps & DispatchProps & OwnProps;
 
-const TodoColumn: React.FC<Props> = (props) => {
-  function addCardHandler(title: string) {
-    const newCard = {
-      id: `${Math.random() + title}`,
-      key: "todo",
-      title,
-      author: props.username,
-      description: "",
-      column: props.todo.title,
-      comments: [],
-    };
+const TodoColumn: React.FC<Props> = ({ todo, addTodoCard, updateColumnTitle, username }) => {
+  function addCardHandler(card: ICard): void {
+    card.author = username;
+    card.column = todo.title;
+    card.key = 'todo';
 
-    const cards = [...props.todo.cards, newCard];
+    const cards = [...todo.cards, card];
 
-    localStorageAgent.saveTodo({ ...props.todo, cards });
+    localStorageAgent.saveTodo({ ...todo, cards });
 
-    props.addTodoCard(newCard);
+    addTodoCard(card);
   }
 
-  function updateColumnTitleHandler(title: string) {
-    localStorageAgent.saveTodo({ ...props.todo, title });
-    props.updateColumnTitle(title);
+  function updateColumnTitleHandler(title: string): void {
+    updateColumnTitle(title);
+    localStorageAgent.saveTodo({ ...todo, title });
   }
 
   return (
-    <Column
-      title={props.todo.title}
-      cards={props.todo.cards}
-      onAddCard={addCardHandler}
-      onUpdateTitle={updateColumnTitleHandler}
-    />
+    <Column title={todo.title} cards={todo.cards} addCard={addCardHandler} onUpdateTitle={updateColumnTitleHandler} />
   );
 };
 
@@ -69,7 +53,4 @@ const mapDispatch = {
   loadTodo: (todo: IColumnState) => loadTodo(todo),
 };
 
-export default connect<StateProps, DispatchProps>(
-  mapState,
-  mapDispatch
-)(TodoColumn);
+export default connect<StateProps, DispatchProps>(mapState, mapDispatch)(TodoColumn);

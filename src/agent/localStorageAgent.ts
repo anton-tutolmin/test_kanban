@@ -1,4 +1,4 @@
-import { ICard, IColumnState } from '../types/types'
+import { ICard, IColumnState, IPopupState } from '../types/types'
 
 class LocalStrorageAgent {
   public saveTodo(todo: IColumnState): void {
@@ -65,27 +65,35 @@ class LocalStrorageAgent {
     return localStorage.removeItem('username');
   }
 
-  public updateCard(card: ICard): void {
-    const data = localStorage.getItem(card.key);
+  public updateCard(popupData: IPopupState): void {
+    const data = localStorage.getItem(popupData.cardKey);
     if (data) {
       const column = JSON.parse(data) as IColumnState;
       column.cards = column.cards.map(c => {
-        if (c.id === card.id) {
-          return { ...card }
+        if (c.id === popupData.cardId) {
+          return {
+            id: popupData.cardId,
+            key: popupData.cardKey,
+            title: popupData.cardTitle,
+            author: popupData.cardAuthor,
+            column: popupData.columnTitle,
+            description: popupData.cardDescription,
+            comments: popupData.cardComments,
+          };
         } else {
           return c;
         }
       });
-      localStorage.setItem(card.key, JSON.stringify(column));
+      localStorage.setItem(popupData.cardKey, JSON.stringify(column));
     }
   }
 
-  public deleteCard(card: ICard): void {
-    const data = localStorage.getItem(card.key);
+  public deleteCard(cardId: string, columnKey: string): void {
+    const data = localStorage.getItem(columnKey);
     if (data) {
       const column = JSON.parse(data) as IColumnState;
-      column.cards = column.cards.filter(c => c.id !== card.id);
-      localStorage.setItem(card.key, JSON.stringify(column));
+      column.cards = column.cards.filter(c => c.id !== cardId);
+      localStorage.setItem(columnKey, JSON.stringify(column));
     }
   }
 }

@@ -1,13 +1,12 @@
+import { IColumnState, ICard } from '../../types/types';
+import { localStorageAgent } from '../../agent/LocalStorageAgent';
 import {
   ADD_INPROGRESS_CARD,
   LOAD_INPROGRESS,
-  REMOVE_PROGRESS_CARD,
   UPDATE_TITLE_INPROGRESS,
   UPDATE_CARD,
   DELETE_CARD
 } from "../actions/actionTypes";
-import { IColumnState } from '../../types/types';
-import { localStorageAgent } from '../../agent/LocalStorageAgent';
 
 const inProgress = localStorageAgent.loadInProgress();
 
@@ -22,12 +21,10 @@ export default function doneCardReducer(state = initialState, action: any): ICol
       return {...action.payload};
     case ADD_INPROGRESS_CARD:
       return {...state, cards: state.cards.concat(action.payload)};
-    case REMOVE_PROGRESS_CARD:
-      return {...state, cards: state.cards.filter((c:any) => c !== action.payload)};
     case UPDATE_TITLE_INPROGRESS:
       return {...state, title: action.payload};
     case UPDATE_CARD: {
-      const cards = state.cards.map(card => {
+      const cards = state.cards.map((card: ICard) => {
         if (card.id === action.payload.id) {
           return {...action.payload}
         } else {
@@ -37,7 +34,7 @@ export default function doneCardReducer(state = initialState, action: any): ICol
       return {...state, cards};
     };
     case DELETE_CARD: {
-      const cards = state.cards.filter(card => card.id !== action.payload);
+      const cards = state.cards.filter((card: ICard) => card.id !== action.payload);
       return { ...state, cards };
     };
     default: return state;
