@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
 import { localStorageAgent } from '../../agent/LocalStorageAgent';
-import { ICard, IComment } from '../../types/types';
+import { ICard, IComment, IPopupState } from '../../types/types';
 import { PopupDescription } from './PopupDescription';
 import { PopupComments } from './PopupComments';
 import {
@@ -15,34 +15,34 @@ import {
 import './Popup.scss';
 
 interface StateProps {
-  card: ICard;
+  popupData: IPopupState;
   username: string;
 }
 
 interface DispatchProps {
-  updateCardTitle: (newTitle: string) => void;
-  updateCardDescription: (newDescription: string) => void;
-  updateCardComments: (comments: IComment[]) => void;
-  updateCard: (card: ICard) => void;
+  updateTitle: (newTitle: string) => void;
+  updateDescription: (newDescription: string) => void;
+  updateComments: (comments: IComment[]) => void;
+  updateInState: (popupData: IPopupState) => void;
+  deleteFromState: (cardId: string) => void;
   clearPopup: () => void;
-  deleteCard: (cardId: string) => void;
 }
 
 type Props = StateProps & DispatchProps;
 
 const Popup: React.FC<Props> = ({
-  card,
+  popupData,
   username,
-  updateCardTitle,
-  updateCardDescription,
-  updateCardComments,
-  updateCard,
+  updateTitle,
+  updateDescription,
+  updateComments,
+  updateInState,
+  deleteFromState,
   clearPopup,
-  deleteCard,
 }) => {
-  if (card.title === '') return null;
+  if (popupData.cardTitle === '') return null;
 
-  const [cardTitle, setCardTitle] = useState<string>(card.title);
+  const [popupTitle, setPopupTitle] = useState<string>(popupData.cardTitle);
 
   const cardTitleRef = useRef<HTMLInputElement>(null);
 
@@ -65,67 +65,67 @@ const Popup: React.FC<Props> = ({
   }
 
   function changeTitleHandler(e: React.ChangeEvent<HTMLInputElement>) {
-    setCardTitle(e.target.value);
+    setPopupTitle(e.target.value);
   }
 
-  function updateCardTitleHandler(e: React.KeyboardEvent) {
+  function updateTitleHandler(e: React.KeyboardEvent) {
     if (e.key === 'Enter') {
-      if (cardTitle.length > 0) {
+      if (popupTitle.length > 0) {
         cardTitleRef.current?.blur();
-        updateCardTitle(cardTitle);
-        updateCard({ ...card, title: cardTitle });
-        localStorageAgent.updateCard({ ...card, title: cardTitle });
+        updateTitle(popupTitle);
+        updateInState({ ...popupData, cardTitle: popupTitle });
+        localStorageAgent.updateCard({ ...popupData, cardTitle: popupTitle });
       } else {
-        setCardTitle(card.title);
+        setPopupTitle(popupData.cardTitle);
       }
     }
   }
 
   function updateDescriptionHandler(newDescription: string) {
-    updateCardDescription(newDescription);
-    updateCard({ ...card, description: newDescription });
+    updateDescription(newDescription);
+    updateInState({ ...popupData, cardDescription: newDescription });
     localStorageAgent.updateCard({
-      ...card,
-      description: newDescription,
+      ...popupData,
+      cardDescription: newDescription,
     });
   }
 
   function addCommentHandler(text: string) {
-    const newComment = {
-      id: `${Math.floor(Math.random() * 10000)}`,
-      cardId: card.id,
+    const newComment: IComment = {
+      id: `${Date.now()}`,
+      cardId: popupData.cardId,
       author: username,
       text,
     };
 
-    const comments = [...card.comments, newComment];
+    const cardComments: IComment[] = [...popupData.cardComments, newComment];
 
-    updateCardComments(comments);
-    updateCard({ ...card, comments });
-    localStorageAgent.updateCard({ ...card, comments });
+    updateComments(cardComments);
+    updateInState({ ...popupData, cardComments });
+    localStorageAgent.updateCard({ ...popupData, cardComments });
   }
 
   function updateCommentHandler(commentId: string, text: string) {
-    const comments = card.comments.map((comment) => {
+    const comments = popupData.cardComments.map((comment) => {
       return comment.id === commentId ? { ...comment, text } : comment;
     });
 
-    updateCardComments(comments);
-    updateCard({ ...card, comments });
-    localStorageAgent.updateCard({ ...card, comments });
+    updateComments(comments);
+    updateInState({ ...popupData, cardComments: comments });
+    localStorageAgent.updateCard({ ...popupData, cardComments: comments });
   }
 
   function deleteCommentHandler(commentId: string) {
-    const comments = card.comments.filter((comment) => comment.id !== commentId);
+    const cardComments = popupData.cardComments.filter((comment) => comment.id !== commentId);
 
-    updateCardComments(comments);
-    updateCard({ ...card, comments });
-    localStorageAgent.updateCard({ ...card, comments });
+    updateComments(cardComments);
+    updateInState({ ...popupData, cardComments });
+    localStorageAgent.updateCard({ ...popupData, cardComments });
   }
 
   function deleteCardHandler() {
-    deleteCard(card.id);
-    localStorageAgent.deleteCard(card);
+    deleteFromState(popupData.cardId);
+    localStorageAgent.deleteCard(popupData.cardId, popupData.cardKey);
     clearPopup();
   }
 
@@ -139,29 +139,29 @@ const Popup: React.FC<Props> = ({
           <div>
             <input
               type="text"
-              value={cardTitle}
+              value={popupTitle}
               className="popup__title h4"
               onChange={changeTitleHandler}
               ref={cardTitleRef}
-              onKeyDown={updateCardTitleHandler}
+              onKeyDown={updateTitleHandler}
             />
-          </div>
-          <div className="title__column-name">
-            <span className="text-secondary">in column</span>
-            <strong>{` ${card.column}`}</strong>
           </div>
           <div className="title__author">
             <span className="text-secondary">author</span>
-            <strong>{` ${card.author}`}</strong>
+            <strong>{` ${popupData.cardAuthor}`}</strong>
+          </div>
+          <div className="title__author">
+            <span className="text-secondary">column</span>
+            <strong>{` ${popupData.columnTitle}`}</strong>
           </div>
           <div className="title__delete-btn">
             <button type="button" className="btn btn-danger" onClick={deleteCardHandler}>
               Delete
             </button>
           </div>
-          <PopupDescription description={card.description} onUpdate={updateDescriptionHandler} />
+          <PopupDescription description={popupData.cardDescription} onUpdate={updateDescriptionHandler} />
           <PopupComments
-            comments={card.comments}
+            comments={popupData.cardComments}
             username={username}
             onAdd={addCommentHandler}
             onUpdate={updateCommentHandler}
@@ -175,17 +175,17 @@ const Popup: React.FC<Props> = ({
 };
 
 const mapState = (state: any) => ({
-  card: state.popup,
+  popupData: state.popup,
   username: state.user.username,
 });
 
 const mapDispatch = {
-  updateCardTitle: (newTitle: string) => updatePopupTitle(newTitle),
-  updateCardDescription: (newDescription: string) => updatePopupDescription(newDescription),
-  updateCardComments: (comments: IComment[]) => updatePopupComments(comments),
-  updateCard: (card: ICard) => updateCard(card),
+  updateTitle: (newTitle: string) => updatePopupTitle(newTitle),
+  updateDescription: (newDescription: string) => updatePopupDescription(newDescription),
+  updateComments: (comments: IComment[]) => updatePopupComments(comments),
+  updateInState: (popupDate: IPopupState) => updateCard(popupDate),
+  deleteFromState: (cardId: string) => deleteCard(cardId),
   clearPopup: () => clearPopup(),
-  deleteCard: (cardId: string) => deleteCard(cardId),
 };
 
 export default connect<StateProps, DispatchProps>(mapState, mapDispatch)(Popup);

@@ -1,4 +1,4 @@
-import { ICard, IColumnState, IComment } from '../../types/types'
+import { ICard, IColumnState, IComment, IPopupState } from '../../types/types'
 import {
   ADD_DONE_CARD,
   ADD_INPROGRESS_CARD,
@@ -23,7 +23,18 @@ import {
   LOGOUT
 } from './actionTypes';
 
-export const loadPopup = (card: ICard) => ({ type: LOAD_POPUP, payload: card });
+export const loadPopup = (card: ICard) => ({
+  type: LOAD_POPUP,
+  payload: {
+    cardId: card.id,
+    cardKey: card.key,
+    cardTitle: card.title,
+    columnTitle: card.column,
+    cardAuthor: card.author,
+    cardComments: card.comments,
+    cardDescription: card.description,
+  },
+});
 
 export const loadUser = (username: string) => ({type: LOAD_USER, payload: username});
 export const logout = () => ({type: LOGOUT})
@@ -38,19 +49,30 @@ export const addInProgressCard = (card: ICard) => ({ type: ADD_INPROGRESS_CARD, 
 export const addTodoCard = (card: ICard) => ({ type: ADD_TODO_CARD, payload: card });
 export const addTestCard = (card: ICard) => ({ type: ADD_TEST_CARD, payload: card });
 
-export const updateDoneTitle = (title: string) => ({ type: UPDATE_TITLE_DONE,payload: title });
-export const updateInProgressTitle = (title: string) => ({ type: UPDATE_TITLE_INPROGRESS, payload: title });
 export const updateTodoTitle = (title: string) => ({ type: UPDATE_TITLE_TODO, payload: title });
+export const updateInProgressTitle = (title: string) => ({ type: UPDATE_TITLE_INPROGRESS, payload: title });
 export const updateTestTitle = (title: string) => ({ type: UPDATE_TITLE_TEST,payload: title });
+export const updateDoneTitle = (title: string) => ({ type: UPDATE_TITLE_DONE,payload: title });
+
 
 export const updatePopupTitle = (title: string) => ({ type: SET_POPUP_TITLE, payload: title });
-
 export const updatePopupDescription = (description: string) => ({
   type: SET_POPUP_DESCRIPTION, payload: description
 });
-
 export const updatePopupComments = (comments: IComment[]) => ({ type: SET_POPUP_COMMENTS, payload: comments });
-export const updateCard = (card: ICard) => ({ type: UPDATE_CARD, payload: card });
+
+export const updateCard = (popupData: IPopupState) => ({
+  type: UPDATE_CARD,
+  payload: {
+    id: popupData.cardId,
+    title: popupData.cardTitle,
+    key: popupData.cardKey,
+    author: popupData.cardAuthor,
+    column: popupData.columnTitle,
+    description: popupData.cardDescription,
+    comments: popupData.cardComments
+  },
+});
 export const deleteCard = (cardId: string) => ({type: DELETE_CARD, payload: cardId})
 
 export const clearPopup = () => ({ type: CLEAR_POPUP });

@@ -1,32 +1,32 @@
-import React, { useState, useRef, useEffect } from "react";
-import { PlusIcon } from "../icons/PlusIcon";
-import Card from "../card/Card";
-import { ICard } from "../../types/types";
-import "./Column.scss";
+import React, { useState, useRef, useEffect } from 'react';
+import { PlusIcon } from '../icons/PlusIcon';
+import Card from '../card/Card';
+import { ICard } from '../../types/types';
+import './Column.scss';
 
 interface ColumnProps {
   title: string;
   cards: ICard[];
-  onAddCard(card: any): void;
+  addCard(card: ICard): void;
   onUpdateTitle(newTitle: string): void;
 }
 
-export const Column: React.FC<ColumnProps> = (props) => {
-  const [title, setTitle] = useState<string>(props.title);
+export const Column: React.FC<ColumnProps> = ({ title, cards, addCard, onUpdateTitle }) => {
+  const [newTitle, setNewTitle] = useState<string>(title);
   const [isCreating, setIsCreating] = useState<boolean>(false);
 
   const titleRef = useRef<HTMLInputElement>(null);
 
   function titleChangeHandler(e: React.ChangeEvent<HTMLInputElement>) {
-    setTitle(e.target.value);
+    setNewTitle(e.target.value);
   }
 
   function keyPressHandler(e: React.KeyboardEvent) {
-    if (e.key === "Enter") {
+    if (e.key === 'Enter') {
       if (title.length === 0) {
-        setTitle(props.title);
+        setNewTitle(title);
       } else {
-        props.onUpdateTitle(title);
+        onUpdateTitle(newTitle);
         titleRef.current?.blur();
       }
     }
@@ -34,47 +34,62 @@ export const Column: React.FC<ColumnProps> = (props) => {
 
   function blurHandler() {
     if (title.length === 0) {
-      setTitle(props.title);
+      setNewTitle(title);
     } else {
-      props.onUpdateTitle(title);
+      onUpdateTitle(newTitle);
     }
   }
 
   function addCardHandler(newCardTitle: string) {
     setIsCreating(false);
-    props.onAddCard(newCardTitle);
+    addCard({
+      id: `${Date.now()}`,
+      key: '',
+      column: '',
+      title: newCardTitle,
+      author: '',
+      description: '',
+      comments: [],
+    });
   }
 
   function closeCreatingViewHandler() {
     setIsCreating(false);
   }
 
+  function dragOver(e: React.DragEvent) {
+    e.preventDefault();
+  }
+
+  function onDrop(e: React.DragEvent) {
+    e.preventDefault();
+
+    const tmp = e.dataTransfer?.getData('card');
+
+    const card = JSON.parse(tmp) as ICard;
+
+    addCard(card);
+  }
+
   return (
     <>
-      <div className="cards_column bg-light mx1 px1">
+      <div className="cards_column bg-light mx1 px1" onDragOver={dragOver} onDrop={onDrop}>
         <input
           className="column__title text-dark"
           type="text"
-          value={title}
+          value={newTitle}
           onChange={titleChangeHandler}
           onKeyPress={keyPressHandler}
           onBlur={blurHandler}
           ref={titleRef}
         />
-        {props.cards.map((c) => (
-          <Card card={c} key={Math.random()} />
+        {cards.map((c) => (
+          <Card card={c} key={Math.random()} draggable />
         ))}
         {isCreating ? (
-          <CreatingView
-            onClose={closeCreatingViewHandler}
-            onAddCard={addCardHandler}
-          />
+          <CreatingView onClose={closeCreatingViewHandler} onAddCard={addCardHandler} />
         ) : (
-          <button
-            type="button"
-            className="column__add-card-btn text-danger"
-            onClick={() => setIsCreating(true)}
-          >
+          <button type="button" className="column__add-card-btn text-danger" onClick={() => setIsCreating(true)}>
             <PlusIcon />
             Add card
           </button>
@@ -90,7 +105,7 @@ interface CreatingViewProps {
 }
 
 const CreatingView: React.FC<CreatingViewProps> = (props) => {
-  const [title, setTitle] = useState<string>("");
+  const [title, setTitle] = useState<string>('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
@@ -102,7 +117,7 @@ const CreatingView: React.FC<CreatingViewProps> = (props) => {
   }
 
   function keyPressHandler(e: React.KeyboardEvent) {
-    if (e.key === "Enter" && title.length !== 0) {
+    if (e.key === 'Enter' && title.length !== 0) {
       props.onAddCard(title);
     }
   }
@@ -119,19 +134,10 @@ const CreatingView: React.FC<CreatingViewProps> = (props) => {
         ref={textareaRef}
       />
       <div className="cards_column__control_btns">
-        <button
-          type="button"
-          className="btn btn btn-success"
-          onClick={() => props.onAddCard(title)}
-        >
+        <button type="button" className="btn btn btn-success" onClick={() => props.onAddCard(title)}>
           Add
         </button>
-        <button
-          type="button"
-          className="close"
-          aria-label="Close"
-          onClick={() => props.onClose()}
-        >
+        <button type="button" className="close" aria-label="Close" onClick={() => props.onClose()}>
           <span aria-hidden="true">&times;</span>
         </button>
       </div>

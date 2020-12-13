@@ -1,13 +1,9 @@
-import React from "react";
-import { connect } from "react-redux";
-import { localStorageAgent } from "../../agent/LocalStorageAgent";
-import { Column } from "./Column";
-import { IColumnState, ICard } from "../../types/types";
-import {
-  addDoneCard,
-  updateDoneTitle,
-  loadDone,
-} from "../../store/actions/actions";
+import React from 'react';
+import { connect } from 'react-redux';
+import { localStorageAgent } from '../../agent/LocalStorageAgent';
+import { Column } from './Column';
+import { IColumnState, ICard } from '../../types/types';
+import { addDoneCard, updateDoneTitle, loadDone } from '../../store/actions/actions';
 
 interface StateProps {
   done: IColumnState;
@@ -25,37 +21,26 @@ interface OwnProps {
 
 type Props = StateProps & DispatchProps & OwnProps;
 
-const DoneColumn: React.FC<Props> = (props) => {
-  function addCardHandler(title: string): void {
-    const newCard = {
-      id: `${Math.random() + title}`,
-      key: "done",
-      title,
-      author: props.username,
-      description: "",
-      column: props.done.title,
-      comments: [],
-    };
+const DoneColumn: React.FC<Props> = ({ done, addDoneCard, updateColumnTitle, loadDone, username }) => {
+  function addCardHandler(card: ICard): void {
+    card.key = 'done';
+    card.column = done.title;
+    card.author = username;
 
-    const cards = [...props.done.cards, newCard];
+    const cards = [...done.cards, card];
 
-    localStorageAgent.saveDone({ ...props.done, cards });
+    localStorageAgent.saveDone({ ...done, cards });
 
-    props.addDoneCard(newCard);
+    addDoneCard(card);
   }
 
   function updateColumnTitleHandler(title: string): void {
-    localStorageAgent.saveDone({ ...props.done, title });
-    props.updateColumnTitle(title);
+    localStorageAgent.saveDone({ ...done, title });
+    updateColumnTitle(title);
   }
 
   return (
-    <Column
-      title={props.done.title}
-      cards={props.done.cards}
-      onAddCard={addCardHandler}
-      onUpdateTitle={updateColumnTitleHandler}
-    />
+    <Column title={done.title} cards={done.cards} addCard={addCardHandler} onUpdateTitle={updateColumnTitleHandler} />
   );
 };
 
@@ -69,7 +54,4 @@ const mapDispatch = {
   loadDone: (done: IColumnState) => loadDone(done),
 };
 
-export default connect<StateProps, DispatchProps>(
-  mapState,
-  mapDispatch
-)(DoneColumn);
+export default connect<StateProps, DispatchProps>(mapState, mapDispatch)(DoneColumn);

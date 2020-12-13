@@ -9,9 +9,9 @@ export interface ICard {
   id: string;
   key: string;
   title: string;
+  column: string;
   description: string;
   author: string;
-  column: string;
   comments: IComment[];
 }
 
@@ -25,9 +25,11 @@ export interface IUserState {
 }
 
 export interface IPopupState {
-  title: string;
-  column: string;
-  author: string;
-  description: string;
-  comments: IComment[];
+  cardId: string,
+  cardKey: string,
+  cardTitle: string;
+  columnTitle: string;
+  cardAuthor: string;
+  cardDescription: string;
+  cardComments: IComment[];
 }

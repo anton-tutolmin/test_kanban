@@ -1,13 +1,9 @@
-import React from "react";
-import { connect } from "react-redux";
-import { localStorageAgent } from "../../agent/LocalStorageAgent";
-import { Column } from "./Column";
-import { IColumnState, ICard } from "../../types/types";
-import {
-  addTestCard,
-  updateTestTitle,
-  loadTest,
-} from "../../store/actions/actions";
+import React from 'react';
+import { connect } from 'react-redux';
+import { localStorageAgent } from '../../agent/LocalStorageAgent';
+import { Column } from './Column';
+import { IColumnState, ICard } from '../../types/types';
+import { addTestCard, updateTestTitle, loadTest } from '../../store/actions/actions';
 
 interface StateProps {
   test: IColumnState;
@@ -16,7 +12,6 @@ interface StateProps {
 interface DispatchProps {
   addTestCard: (card: ICard) => void;
   updateColumnTitle: (newTitle: string) => void;
-  loadTest: (test: IColumnState) => void;
 }
 
 interface OwnProps {
@@ -25,37 +20,26 @@ interface OwnProps {
 
 type Props = StateProps & DispatchProps & OwnProps;
 
-const TestColumn: React.FC<Props> = (props) => {
-  function addCardHandler(title: string): void {
-    const newCard = {
-      id: `${Math.random() + title}`,
-      key: "test",
-      title,
-      author: props.username,
-      description: "",
-      column: props.test.title,
-      comments: [],
-    };
+const TestColumn: React.FC<Props> = ({ test, addTestCard, updateColumnTitle, username }) => {
+  function addCardHandler(card: ICard): void {
+    card.author = username;
+    card.column = test.title;
+    card.key = 'test';
 
-    const cards = [...props.test.cards, newCard];
+    const cards = [...test.cards, card];
 
-    localStorageAgent.saveTest({ ...props.test, cards });
+    localStorageAgent.saveTest({ ...test, cards });
 
-    props.addTestCard(newCard);
+    addTestCard(card);
   }
 
   function updateColumnTitleHandler(title: string): void {
-    localStorageAgent.saveTest({ ...props.test, title });
-    props.updateColumnTitle(title);
+    localStorageAgent.saveTest({ ...test, title });
+    updateColumnTitle(title);
   }
 
   return (
-    <Column
-      title={props.test.title}
-      cards={props.test.cards}
-      onAddCard={addCardHandler}
-      onUpdateTitle={updateColumnTitleHandler}
-    />
+    <Column title={test.title} cards={test.cards} addCard={addCardHandler} onUpdateTitle={updateColumnTitleHandler} />
   );
 };
 
@@ -69,7 +53,4 @@ const mapDispatch = {
   loadTest: (test: IColumnState) => loadTest(test),
 };
 
-export default connect<StateProps, DispatchProps>(
-  mapState,
-  mapDispatch
-)(TestColumn);
+export default connect<StateProps, DispatchProps>(mapState, mapDispatch)(TestColumn);

@@ -1,13 +1,9 @@
-import React from "react";
-import { connect } from "react-redux";
-import { localStorageAgent } from "../../agent/LocalStorageAgent";
-import { Column } from "./Column";
-import { IColumnState, ICard } from "../../types/types";
-import {
-  addInProgressCard,
-  updateInProgressTitle,
-  loadInProgress,
-} from "../../store/actions/actions";
+import React from 'react';
+import { connect } from 'react-redux';
+import { localStorageAgent } from '../../agent/LocalStorageAgent';
+import { Column } from './Column';
+import { IColumnState, ICard } from '../../types/types';
+import { addInProgressCard, updateInProgressTitle, loadInProgress } from '../../store/actions/actions';
 
 interface StateProps {
   inProgress: IColumnState;
@@ -16,7 +12,6 @@ interface StateProps {
 interface DispatchProps {
   addInProgressCard: (card: ICard) => void;
   updateColumnTitle: (newTitle: string) => void;
-  loadInProgress: (inProgress: IColumnState) => void;
 }
 
 interface OwnProps {
@@ -25,35 +20,29 @@ interface OwnProps {
 
 type Props = StateProps & DispatchProps & OwnProps;
 
-const InProgressColumn: React.FC<Props> = (props) => {
-  function addCardHandler(title: string): void {
-    const newCard = {
-      id: `${Math.random() + title}`,
-      key: "inProgress",
-      title,
-      author: props.username,
-      description: "",
-      column: props.inProgress.title,
-      comments: [],
-    };
+const InProgressColumn: React.FC<Props> = ({ inProgress, addInProgressCard, updateColumnTitle, username }) => {
+  function addCardHandler(card: ICard): void {
+    card.key = 'inProgress';
+    card.column = inProgress.title;
+    card.author = username;
 
-    const cards = [...props.inProgress.cards, newCard];
+    const cards = [...inProgress.cards, card];
 
-    localStorageAgent.saveInProgress({ ...props.inProgress, cards });
+    localStorageAgent.saveInProgress({ ...inProgress, cards });
 
-    props.addInProgressCard(newCard);
+    addInProgressCard(card);
   }
 
   function updateColumnTitleHandler(title: string): void {
-    localStorageAgent.saveInProgress({ ...props.inProgress, title });
-    props.updateColumnTitle(title);
+    localStorageAgent.saveInProgress({ ...inProgress, title });
+    updateColumnTitle(title);
   }
 
   return (
     <Column
-      title={props.inProgress.title}
-      cards={props.inProgress.cards}
-      onAddCard={addCardHandler}
+      title={inProgress.title}
+      cards={inProgress.cards}
+      addCard={addCardHandler}
       onUpdateTitle={updateColumnTitleHandler}
     />
   );
@@ -69,7 +58,4 @@ const mapDispatch = {
   loadInProgress: (inProgress: IColumnState) => loadInProgress(inProgress),
 };
 
-export default connect<StateProps, DispatchProps>(
-  mapState,
-  mapDispatch
-)(InProgressColumn);
+export default connect<StateProps, DispatchProps>(mapState, mapDispatch)(InProgressColumn);
