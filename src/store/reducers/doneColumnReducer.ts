@@ -21,8 +21,13 @@ export default function doneCardReducer(state = initialState, action: any): ICol
       return {...action.payload};
     case ADD_DONE_CARD:
       return {...state, cards: state.cards.concat(action.payload)};
-    case UPDATE_TITLE_DONE:
-      return {...state, title: action.payload};
+    case UPDATE_TITLE_DONE: {
+      const cards = state.cards.map((card: ICard) => {
+        card.column = action.payload;
+        return card;
+      });
+      return { title: action.payload, cards };
+    };
     case UPDATE_CARD: {
       const cards = state.cards.map((card: ICard) => {
         if (card.id === action.payload.id) {
